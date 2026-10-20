@@ -1,0 +1,15 @@
+# Activity-manager triggers cancelled at boot by 60-slim (extended regex on
+# the activity name). These re-register every boot, so they are cancelled
+# every boot. Removing a line restores that trigger after the next reboot.
+^com\.webos\.service\.admanager\.
+^acr_wake_up_
+^adoverlay_wake_up_
+^com\.webos\.app\.care365\.
+^com\.webos\.service\.sportsal
+^com\.webos\.service\.magicnum\.
+^com\.webos\.service\.nlpmanager\.
+^demo\.
+^com\.webos\.service\.(ssg|dial)\.ssdpmanager\.
+^com\.webos\.service\.ssdplgtv\.
+# LG Store auto-update could replace YouTube AdFree (same app ID) with stock.
+^com\.webos\.appUpdateService\.check$

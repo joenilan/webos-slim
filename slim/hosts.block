@@ -1,0 +1,17 @@
+# Conservative LG ad/telemetry block, derived from hostnames found in this TV's
+# own firmware and data partitions (work/04.64.00/analysis/runtime-lg-hosts.txt).
+# Ads and ACR campaigns
+ad.lgsmartad.com us.ad.lgsmartad.com info.lgsmartad.com us.info.lgsmartad.com
+cdn-aas-campaigns.alphonso.tv cdn-campaigns-temp.alphonso.tv
+# Field-test log collection and crash reports
+ngfts.lge.com gfts.lge.com aic-ngfts.lge.com ic-ngfts.lge.com qt2-ngfts.lge.com kic-qt2-ngfts.lge.com
+rdx2.lgtvsdp.com
+# Home-screen recommendations, beacons and usage statistics
+cdpbeacon.lgtvcommon.com cdpsvc.lgtvcommon.com aic.cdpsvc.lgtvcommon.com
+cdplauncher.lgtvcommon.com aic.cdplauncher.lgtvcommon.com recommend.lgtvcommon.com
+lgrecommends.lgappstv.com us.lgrecommends.lgappstv.com qt2-kr.lgrecommends.lgappstv.com
+nudge.lgtvcommon.com wau.lgtvcommon.com pnv.lgtvcommon.com ibsstat.lgappstv.com
+# Shopping, food, LG Channels home feed, promo cards, remote management
+lgshoplog.lgappstv.com lgshopsvc.lgappstv.com aic.lgshopsvc.lgappstv.com us-foodus.lgappstv.com
+homeprv.lgtvcommon.com lgchhomeapp.lgtvcommon.com aic.lgchhomeapp.lgtvcommon.com
+qcardservice.lgtvcommon.com netflixvoice.lgtvcommon.com download.365care.lge.com

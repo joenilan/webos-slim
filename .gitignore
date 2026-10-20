@@ -1,0 +1,5 @@
+slim/slim.conf
+theme-out/
+rootfs/
+files/
+manifest.tsv

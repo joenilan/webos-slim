@@ -1,0 +1,28 @@
+# Dynamic Luna services (no systemd unit), killed at boot by 60-slim.
+admanager
+adoverlay-service
+# AirPlay/HomeKit receivers (airplay.service, airplay.homekit). Separate from
+# the airplay-adaptor unit. On the tested TV AirPlayEnabled was also set false (by hand) in
+# /var/lib/airplay/airplayPersistedUserSettings.plist so an on-demand respawn
+# stays silent. Undo: Settings > General > AirPlay, or restore the plist backup.
+airplay
+homekit
+# Added 2026-10-19 after one-at-a-time live tests: each stayed down and Luna
+# calls (settings, eim, app manager) still answered in ~0.03 s.
+# Voice/recommendation leftovers (tts kept for Audio Guidance).
+performer
+nlpmanager
+sportsalarm
+livepick-plus
+# DLNA scanner, photo renderer (main thread shows as tPRM), thumbnail manager.
+cbox
+photorenderer
+tnm
+# Update daemon; its cpulimit exits with it. Firmware updates are blocked anyway.
+update
+# Tested and NOT listed (the hub restarts them within seconds):
+#   iconnectivity: irdbmanager (IR blaster) reconnects immediately.
+#   upnpd: connection manager and a DLNA client re-register.
+#   unified JS server (ss.apiadapter / unified_service): hosts every
+#     run-js-service -u service incl. settingsui; back ~18 s after a boot kill.
+#   dmost: purpose unclear, OOM-protected by LG; left alone.

@@ -1,0 +1,91 @@
+# Built-in LG apps hidden from the app manager by 60-slim (RAM-only overlay with
+# whiteouts over the app folders, then the app manager restart rescans them).
+# The firmware is untouched; remove a line (or the file) and reboot to restore.
+#
+# Kept on purpose (do NOT add): com.palm.app.settings, livetv, hdmi1-4,
+# inputcommon, externalinput.*, screensaver (DVD saver hooks it), notificationcenter (Homebrew failsafe toast), webapphost,
+# oobe/firstuse/eula (needed after a reset), factorywin (service menu), tvhotkey
+# (TV's physical buttons), installation/channelsetting/channeledit/livemenu/
+# dvrpopup/scheduler (live TV), remotesetting/connectionwizard (remote pairing),
+# btsurroundautotuning (Bluetooth kept on), softwareupdate, photovideo/music/
+# tvsimpleviewer/systemmusic (USB media), onetouchsoundtuning, self-diagnosis.
+
+# Ads and ad overlays
+com.webos.app.adapp
+com.webos.app.adhdmi1
+com.webos.app.adhdmi2
+com.webos.app.adhdmi3
+com.webos.app.adhdmi4
+com.webos.app.adoverlay
+com.webos.app.adoverlayex
+# LivePlus content recognition
+com.webos.app.acrcomponent
+com.webos.app.acrhdmi1
+com.webos.app.acrhdmi2
+com.webos.app.acrhdmi3
+com.webos.app.acrhdmi4
+com.webos.app.acroverlay
+# Commercial overlay containers
+com.webos.app.overlaycontainer
+com.webos.app.overlaycontainerex
+com.webos.app.overlaycontainerhdmi1
+com.webos.app.overlaycontainerhdmi2
+com.webos.app.overlaycontainerhdmi3
+com.webos.app.overlaycontainerhdmi4
+# Food delivery and Dangbei promo containers
+com.webos.app.fooddelivery
+com.webos.app.fooddeliveryex
+com.webos.app.fooddeliveryhdmi1
+com.webos.app.fooddeliveryhdmi2
+com.webos.app.fooddeliveryhdmi3
+com.webos.app.fooddeliveryhdmi4
+com.webos.app.dangbei-card
+com.webos.app.dangbei-overlay
+# Voice assistants and voice search
+amazon.alexapr
+google.assistant
+com.webos.app.voice
+com.webos.app.voiceweb
+# Casting and mirroring (services already off)
+airplay
+com.webos.app.miracast
+# LG store, account, cloud and support
+com.webos.app.discovery
+com.webos.app.membership
+com.webos.app.facebooklogin
+com.webos.app.homeconnect
+# (Input key target by default; remapped to showInputPicker in keepalive.json)
+com.webos.app.care365
+com.webos.app.customersupport
+com.webos.app.remoteservice
+com.webos.app.cmp-client
+com.webos.app.sportsteamsettings
+com.webos.app.magicnum
+com.webos.app.tvuserguide
+# Browsers
+com.webos.app.browser
+com.webos.app.beanbrowser
+# Interactive broadcast services not used in the US
+com.webos.app.livedmost
+com.webos.app.liveginga
+com.webos.app.liveibb
+# Retail demos and developer examples
+com.webos.app.store-demo
+com.webos.app.sync-demo
+com.webos.exampleapp.enyoapp.epg
+com.webos.exampleapp.groupowner
+com.webos.exampleapp.nav
+com.webos.exampleapp.qmlapp.client.negative.one
+com.webos.exampleapp.qmlapp.client.negative.two
+com.webos.exampleapp.qmlapp.client.positive.one
+com.webos.exampleapp.qmlapp.client.positive.two
+com.webos.exampleapp.qmlapp.discover
+com.webos.exampleapp.qmlapp.epg
+com.webos.exampleapp.qmlapp.hbbtv
+com.webos.exampleapp.qmlapp.livetv
+com.webos.exampleapp.qmlapp.search
+com.webos.exampleapp.systemui
+# LG Home and home bar. Launch Home replaces them; restore-lg-home.sh runs
+# restore-slim.sh first, which un-hides them before switching back.
+com.webos.app.home
+com.webos.app.fullhome

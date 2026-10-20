@@ -1,0 +1,6 @@
+# Binaries replaced at boot by a no-op stub (RAM-only bind mount; gone if the
+# hook is removed). Callers of a stubbed Luna service hang until their own
+# timeout, so only list services whose callers were tested not to block.
+# scd-service: HDMI screen-content recognition (OCR on captured frames).
+# Tested: HDMI input launches in 0.5 s with it stubbed.
+/usr/sbin/scd-service

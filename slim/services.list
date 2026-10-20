@@ -1,0 +1,24 @@
+# Services stopped and runtime-masked at boot by 60-slim. One unit name per line.
+# Runtime masks live in /run and vanish on reboot; removing the hook undoes all.
+
+# Group 1: ads and telemetry
+rdxd
+remotelogger
+nudge
+
+# Group 2: content indexing (enable after group 1 is verified)
+contentminer
+
+# Group 3: voice, casting, AirPlay and Screen Share (drop lines you use)
+voiceconductor
+voiceinput
+airplay-adaptor
+miracast
+dmr
+ssdp-discovery-lgtv
+
+# Group 4: app preloading (keeps LG Home, Netflix, AirPlay, browser in RAM)
+preload-manager
+
+# Group 5: viewing-history collection (app, channel and set-top-box usage uploads)
+user-context-manager

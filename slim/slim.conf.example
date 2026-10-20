@@ -1,0 +1,4 @@
+# Local choices for 60-slim (sourced as shell).
+# Input to park on at boot so the TV never opens on antenna static.
+# Used only while nothing is connected to it; otherwise the first empty HDMI.
+PARK_INPUT=com.webos.app.hdmi3

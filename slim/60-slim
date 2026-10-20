@@ -1,0 +1,286 @@
+#!/bin/sh
+# Slim system: theme, hidden apps, config overrides, and stopped telemetry
+# services. Installed in /var/lib/webosbrew/init.d; Homebrew's failsafe skips
+# it after a crashed boot. Undo: sh /home/root/restore-slim.sh
+#
+# Order matters for what you see on screen: everything visual is applied first,
+# then the compositor and app manager restart once, the home app is brought
+# to the front, and the slow service shutdown runs afterwards.
+DIR=/home/root/slim
+LOG=/tmp/slim.log
+log() { echo "[$(cut -d' ' -f1 /proc/uptime)s] $*"; }
+list() { grep -vE '^[[:space:]]*(#|$)' "$1"; }
+# Local choices, e.g. PARK_INPUT=com.webos.app.hdmi3 (see slim.conf).
+[ -f "$DIR/slim.conf" ] && . "$DIR/slim.conf"
+home_app() {
+  luna-send -n 1 -w 4000 luna://com.webos.service.settings/getSystemSettings \
+    '{"category":"general","keys":["defaultApps"]}' 2>/dev/null | grep -oE '"home":"[^"]*"' | cut -d'"' -f4
+}
+# Once per boot: a second run would stack app-hiding overlays and restart the
+# compositor again. /tmp is RAM, so the log starts empty at every boot.
+if grep -q 'slim start' "$LOG" 2>/dev/null; then
+  log "already ran this boot; reboot to apply changes" >>"$LOG"
+  exit 0
+fi
+(
+  log "slim start"
+  # Own failsafe: Homebrew clears its flag ~10 s after run-parts, long before
+  # the restarts below finish. If the previous run never reached "slim done",
+  # skip once (like Homebrew's failsafe) and clear the flag.
+  G=/var/luna/preferences/slim_inprogress
+  if [ -e "$G" ]; then
+    rm -f "$G"; sync
+    log "previous slim run did not finish; skipped this boot"
+    exit 0
+  fi
+  touch "$G"; sync
+
+  if [ -f "$DIR/hosts.block" ] && ! grep -q '^# slim block' /etc/hosts; then
+    echo '# slim block' >> /etc/hosts
+    grep -v '^#' "$DIR/hosts.block" | tr ' ' '\n' | grep . | while read -r h; do
+      printf '0.0.0.0 %s\n:: %s\n' "$h" "$h" >> /etc/hosts
+    done
+  fi
+
+  # Boot and "empty screen" target: LG reopens lastInputApp at power-on and
+  # whenever the screen is empty (Live TV static with no antenna). Point it at
+  # the home app, and stop app preloading before the app manager restarts.
+  home=$(home_app)
+  if [ -n "$home" ]; then
+    luna-send -n 1 -w 4000 luna://com.webos.service.settings/setSystemSettings \
+      "{\"category\":\"general\",\"settings\":{\"lastInputApp\":\"$home\",\"physicalLastInputApp\":\"$home\"}}" >/dev/null 2>&1
+    log "last input set to $home"
+  fi
+  # Park the remembered hardware input on an empty HDMI port. inputcommon
+  # shows the input manager's last source at every boot; with an antenna that
+  # is analog static. Showing a port once makes the input manager store it.
+  empty=$(luna-send -n 1 -w 5000 luna://com.webos.service.eim/getAllInputStatus '{}' 2>/dev/null |
+    tr '{' '\n' | grep '"HDMI_' | grep '"connected": *false' | grep -oE '"appId": *"[^"]*"' | cut -d'"' -f4)
+  last=$(luna-send -n 1 -w 5000 luna://com.webos.service.eim/getLastInput '{}' 2>/dev/null |
+    grep -oE '"physicalLastSourceAppId": *"[^"]*"' | cut -d'"' -f4)
+  # PARK_INPUT (slim.conf) while it is empty, else the first empty port.
+  park=$(echo "$empty" | head -1)
+  [ -n "$PARK_INPUT" ] && echo "$empty" | grep -qx "$PARK_INPUT" && park="$PARK_INPUT"
+  if [ -n "$park" ] && [ "$last" != "$park" ]; then
+    luna-send -n 1 -w 8000 luna://com.webos.applicationManager/launch "{\"id\":\"$park\"}" >/dev/null 2>&1
+    log "parked input on $park (was: ${last:-unknown})"
+  fi
+
+
+  # Replace listed binaries with a no-op stub so the Luna hub cannot start them.
+  # Callers of a stubbed service wait until their own timeout; only list
+  # services whose callers were tested not to block (see stub.list).
+  if [ -f "$DIR/stub.list" ]; then
+    printf '#!/bin/sh\nexit 0\n' > /tmp/slim-stub && chmod 755 /tmp/slim-stub
+    for b in $(list "$DIR/stub.list"); do
+      killall "${b##*/}" >/dev/null 2>&1
+      grep -q " $b " /proc/mounts || mount --bind /tmp/slim-stub "$b"
+      log "stubbed $b"
+    done
+  fi
+
+  # Hide built-in apps: read-only overlay whose top layer holds whiteouts for
+  # the listed app folders. The app manager restart below rescans them.
+  if [ -f "$DIR/apps.hide" ]; then
+    ids=$(list "$DIR/apps.hide")
+    n=0
+    for root in /usr/palm/applications /mnt/otncabi/usr/palm/applications /media/system/apps/usr/palm/applications; do
+      wh=/tmp/slim-ov$root
+      grep -q " $root overlay " /proc/mounts && umount "$root"
+      rm -rf "$wh"; mkdir -p "$wh"
+      for id in $ids; do
+        [ -d "$root/$id" ] && mknod "$wh/$id" c 0 0 && n=$((n + 1))
+      done
+      [ -n "$(ls "$wh")" ] && mount -t overlay overlay -o "lowerdir=$wh:$root" "$root"
+    done
+    log "hid $n built-in apps"
+    # The overlay hides the DVD screensaver's earlier bind mount on main.qml
+    # (stock LG saver showed instead); bind it again on top.
+    ss=/var/lib/webosbrew/init.d/50-custom-screensaver
+    qml=$(dirname "$(realpath "$ss" 2>/dev/null)")/screensaver-main.qml
+    target=/usr/palm/applications/com.webos.app.screensaver/qml/main.qml
+    if [ -f "$qml" ] && [ -f "$target" ] && ! cmp -s "$qml" "$target"; then
+      mount --bind "$qml" "$target" && log "custom screensaver re-bound over overlay"
+    fi
+  fi
+
+  # System-UI theme: bind-mount recolored QML over the originals, only when the
+  # live file still matches the hash it was built from (tools/theme/).
+  T=/home/root/theme
+  if [ -f "$T/manifest.tsv" ]; then
+    ok=0; skip=0
+    while IFS="$(printf '\t')" read -r path orig new; do
+      src="$T/files/${path#/usr/lib/qml/}"
+      live=$(sha256sum "$path" 2>/dev/null | cut -d' ' -f1)
+      [ "$live" = "$new" ] && { ok=$((ok + 1)); continue; }
+      if [ "$live" = "$orig" ] && [ "$(sha256sum "$src" | cut -d' ' -f1)" = "$new" ]; then
+        mount --bind "$src" "$path" && ok=$((ok + 1))
+      else
+        skip=$((skip + 1))
+      fi
+    done < "$T/manifest.tsv"
+    log "theme: $ok files applied, $skip skipped (hash mismatch)"
+  fi
+
+  # RAM-only configd layer (/var/run/tvconfig/hwoption outranks the distro
+  # layer): trimmed keep-alive list and the Input key mapping.
+  if [ -f "$DIR/keepalive.json" ]; then
+    cp "$DIR/keepalive.json" /var/run/tvconfig/hwoption/zz-slim.json
+    luna-send -n 1 -w 8000 luna://com.webos.service.config/reconfigure '{}' >/dev/null 2>&1
+    # The compositor hosts Quick Settings, the input picker and key mapping and
+    # loaded the old theme/config at boot; SAM reads keep-alive only at start.
+    # App manager first, so hidden apps are gone before the compositor restart
+    # tries to launch any (it launched Magic Number otherwise). Block
+    # preload-manager before the restarts (drop-in + reload, ~1.3 s): it came
+    # back after them and preloaded HDMI 2 and Live TV over the home app. The
+    # compositor restart's last-input launch opens the home app (lastInputApp).
+    mkdir -p /run/systemd/system/preload-manager.service.d
+    printf '[Unit]\nConditionPathExists=/run/slim-never\n' > /run/systemd/system/preload-manager.service.d/zz-slim.conf
+    systemctl daemon-reload
+    systemctl stop preload-manager >/dev/null 2>&1
+    systemctl restart sam
+    systemctl stop preload-manager >/dev/null 2>&1
+    log "app manager restarted"
+    systemctl restart surface-manager
+    log "compositor restarted"
+
+    # Keep the home app in front while the restarts settle. Foreground info is
+    # unreliable (empty) for a while after the compositor restart, so decide
+    # from the running list: launch home only when it is not running, and close
+    # Live TV or the parked input if either opened (last-input handler/boot).
+    (
+      home=""
+      i=0
+      while [ "$i" -lt 40 ]; do
+        [ -z "$home" ] && home=$(home_app)
+        if [ -n "$home" ]; then
+          running=$(luna-send -n 1 -w 3000 luna://com.webos.applicationManager/running '{}' 2>/dev/null |
+            grep -oE '"id":"[^"]*"' | cut -d'"' -f4)
+          if ! echo "$running" | grep -qx "$home"; then
+            luna-send -n 1 -w 8000 luna://com.webos.applicationManager/launch "{\"id\":\"$home\"}" >/dev/null 2>&1
+            log "launched $home (not running)"
+            # A launch takes a few seconds to show up in the running list.
+            sleep 6; i=$((i + 6))
+          fi
+          for a in com.webos.app.livetv $park; do
+            if echo "$running" | grep -qx "$a"; then
+              luna-send -n 1 -w 8000 luna://com.webos.applicationManager/launch "{\"id\":\"$home\"}" >/dev/null 2>&1
+              luna-send -n 1 -w 4000 luna://com.webos.applicationManager/closeByAppId "{\"id\":\"$a\"}" >/dev/null 2>&1
+              log "closed $a, $home in front"
+            fi
+          done
+        fi
+        sleep 1; i=$((i + 1))
+      done
+      log "settle loop done"
+    ) &
+    settle=$!
+  fi
+
+  # Slow part (each systemctl mask and the reload take seconds on this TV), so
+  # it runs after the visual work. The reload makes the masks block restarts.
+  units=$(list "$DIR/services.list")
+  for u in $units; do
+    systemctl mask --runtime "$u" >/dev/null 2>&1
+    systemctl stop --no-block "$u" >/dev/null 2>&1
+  done
+  # A unit file in /etc/systemd/system outranks the /run mask symlink
+  # (voiceinput, airplay-adaptor, preload-manager): block those with a
+  # runtime drop-in whose condition can never be met.
+  for u in $units; do
+    fp=$(systemctl show -p FragmentPath --value "$u" 2>/dev/null)
+    if [ -n "$fp" ] && [ "$fp" != /dev/null ]; then
+      mkdir -p "/run/systemd/system/$u.service.d"
+      printf '[Unit]\nConditionPathExists=/run/slim-never\n' > "/run/systemd/system/$u.service.d/zz-slim.conf"
+      log "mask shadowed by $fp; added drop-in for $u"
+    fi
+  done
+  systemctl daemon-reload
+  systemctl stop preload-manager >/dev/null 2>&1
+  sleep 10
+  for u in $units; do
+    # Some LG daemons ignore SIGTERM and hang in "deactivating"; is-active is
+    # false for that state, so test the state itself.
+    st=$(systemctl show -p ActiveState --value "$u" 2>/dev/null)
+    case "$st" in active|activating|deactivating|reloading)
+      systemctl kill -s KILL "$u" >/dev/null 2>&1 ;;
+    esac
+    log "stopped+masked $u: $st -> $(systemctl show -p ActiveState --value "$u" 2>/dev/null)"
+  done
+
+  # Cancel activity-manager triggers that wake ad, ACR, demo and update
+  # services. Before the kills below, or a trigger relaunches a daemon at once
+  # (sportsalarm did).
+  if [ -f "$DIR/activities.block" ]; then
+    pat=$(list "$DIR/activities.block" | tr '\n' '|' | sed 's/|$//')
+    luna-send -n 1 -w 8000 luna://com.webos.service.activitymanager/list \
+      '{"details":true,"subscribers":false,"current":false,"internal":false}' 2>/dev/null |
+      sed 's/{"activityId":/\n{"activityId":/g' |
+      awk -F'"activityId":' 'NF>1 { split($2, a, ","); i = index($0, "\"name\":\"");
+        if (i) { n = substr($0, i + 8); sub(/".*/, "", n); print a[1], n } }' |
+      while read -r id name; do
+        echo "$name" | grep -qE "$pat" || continue
+        # stdin must not be this pipe: luna-send exits at once, without
+        # sending, when stdin has data or EOF (measured 2026-10-19).
+        r=$(luna-send -n 1 -w 4000 luna://com.webos.service.activitymanager/cancel "{\"activityId\":$id}" </dev/null 2>&1)
+        case "$r" in
+          *'"returnValue":true'*) log "cancelled activity $name ($id)" ;;
+          *) log "cancel FAILED $name ($id): $r" ;;
+        esac
+      done
+  fi
+
+  # Dynamic Luna services (no systemd unit); the hub relaunches them on demand.
+  if [ -f "$DIR/kill.list" ]; then
+    for p in $(list "$DIR/kill.list"); do
+      # pidof, not killall: some daemons rename their main thread
+      # (photorenderer shows as tPRM). homekit ignores SIGTERM, so follow
+      # up with SIGKILL.
+      pids=$(pidof "$p") || continue
+      kill $pids 2>/dev/null
+      sleep 1
+      kill -9 $pids 2>/dev/null
+      log "killed $p"
+    done
+    sleep 3
+    for p in $(list "$DIR/kill.list"); do
+      pidof "$p" >/dev/null && log "respawned: $p"
+    done
+  fi
+
+  # Keep the last input on the home app: LG rewrites it when an input is
+  # used, which would make the next boot open that input.
+  if [ -n "$home" ]; then
+    gen="$(cut -d' ' -f1 /proc/uptime)-$$"
+    echo "$gen" > /tmp/slim-lastinput.gen
+    [ -f /tmp/slim-lastinput.pid ] && kill "$(cat /tmp/slim-lastinput.pid)" 2>/dev/null
+    pkill -f 'physicalLastInputApp"\],"subscribe' 2>/dev/null
+    (
+      # -w is an exit timeout (2e9 ms = 23 days of uptime); resubscribe after it.
+      # A generation token stops an older loop when the hook runs again
+      # (killing luna-send alone would only make the loop resubscribe).
+      while [ "$(cat /tmp/slim-lastinput.gen 2>/dev/null)" = "$gen" ]; do
+        luna-send -i -w 2000000000 luna://com.webos.service.settings/getSystemSettings \
+          '{"category":"general","keys":["lastInputApp","physicalLastInputApp"],"subscribe":true}' </dev/null 2>/dev/null
+        sleep 5
+      done |
+        while read -r line; do
+          case "$line" in
+            *'"lastInputApp"'*|*'"physicalLastInputApp"'*) ;;
+            *) continue ;;
+          esac
+          if echo "$line" | grep -oE '"(physicalL|l)astInputApp":"[^"]*"' | grep -qv "\"$home\""; then
+            luna-send -n 1 -w 4000 luna://com.webos.service.settings/setSystemSettings \
+              "{\"category\":\"general\",\"settings\":{\"lastInputApp\":\"$home\",\"physicalLastInputApp\":\"$home\"}}" </dev/null >/dev/null 2>&1
+            log "last input reset to $home"
+          fi
+        done
+    ) &
+    echo $! > /tmp/slim-lastinput.pid
+    log "last-input watcher started"
+  fi
+  [ -n "$settle" ] && wait "$settle"
+  rm -f "$G"
+  log "slim done"
+) >>"$LOG" 2>&1 </dev/null &
+exit 0
