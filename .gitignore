@@ -3,3 +3,18 @@ theme-out/
 rootfs/
 files/
 manifest.tsv
+
+# Private device material and local research outputs
+research-input/
+research-output/
+dumps/
+state/
+work/
+*.img
+*.bin
+*.key
+*.pem
+.env
+.env.*
+__pycache__/
+*.pyc

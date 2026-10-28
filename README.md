@@ -1,115 +1,118 @@
 # webos-slim
 
-A boot hook that debloats a rooted LG webOS TV **without modifying the firmware**.
-Everything it does lives in RAM or in writable storage and disappears when the
-hook is removed: ads, telemetry, content recognition (ACR/LivePlus), voice,
-casting and preload daemons are stopped; built-in promo apps are hidden; LG's
-tracking hosts are blocked; and the TV boots straight to your home app instead
-of Live TV.
+A launcher, debloating toolkit, and system-development workspace for rooted LG
+webOS TVs. The goal is an owner-controlled system: unwanted feature stacks
+removed together with their callers and startup paths.
 
-Tested on one TV: **LG 55UN7000PUB, webOS 5.6.2 (firmware 04.64.00)**. Other
-webOS 5 models are likely close, but service and app names differ between
-models and firmware versions. Read the lists before installing, and enable
-groups one at a time.
+**Confirmed platform:** one LG 55UN7000PUB, firmware **04.64.00**, webOS
+**5.6.2-21**, ARMv7. This is a device-specific project, not a universal TV profile.
 
-On that TV, after boot: about 570 MB available RAM (was about 270 MB) and
-Settings/inputs still answer instantly.
+| Component | Current status |
+| --- | --- |
+| [Launch Home](launcher/) | Current 0.0.133 source, tests and build scripts |
+| [Debloat hook](slim/) | Installed/reboot-tested runtime policy; nine source files matched the live TV on 2026-10-28 |
+| [Device profile](profiles/lg-55un7000pub-04.64.00.json) | Records the 18 removed apps, 66 hidden built-ins, services, activities and host rules |
+| [Voice registry experiment](experiments/voice_registry.py) | Temporary unregister/restore demonstrated on the running TV |
+| [Voice caller-removal builder](experiments/build_voice_ui_candidate.py) | Builds an offline candidate from private, hash-matched TV QML; not deployed |
+| Permanent system-stack removal / custom firmware | Research in progress; no reduced image has been booted |
 
-## Why not strip the firmware?
+## What has actually been removed?
 
-LG's system partitions are signed. On the tested TV the bootloader halts on a
-failed check and there is no automatic fallback to the other bank, so a
-modified rootfs means a brick (recoverable only with an eMMC programmer). This
-kit gets the same runtime result from the writable side: runtime systemd
-masks, RAM-only overlays and bind mounts, and Luna calls.
+Eighteen removable apps were uninstalled through the regular app manager and
+verified absent after reboot. Other built-in apps are currently **hidden by RAM
+overlays**. Unwanted services are currently stopped/masked, killed or stubbed,
+and their activity triggers are cancelled. The original built-in files remain
+in the firmware. Those are different states; the existing hook is not a complete
+stripped operating system.
 
-## Requirements
+The first live structural-removal test went beyond stopping a daemon: it
+unloaded the voice service's manifest from the bus registry, tested absence,
+and restored it. A harmless request to the registered/stopped service produced
+no reply at its 23-second deadline (**23.715 s** including SSH). While
+unregistered it returned an explicit absence error in **0.268 s**. Settings
+and input queries passed, core processes did not restart, and YouTube retained
+its foreground app and process. This measures one service request, not general
+UI speed, RAM savings or uninterrupted audio/video.
 
-- A rooted TV with [Homebrew Channel](https://github.com/webosbrew/webos-homebrew-channel)
-  (it runs `/var/lib/webosbrew/init.d` hooks at boot) and SSH as root.
-- Optional: a custom home app (for example a launcher) set as the TV's default
-  home app. The hook reads `defaultApps.home` and keeps that app in front.
+The original registration and permissions were restored. The experiment is not
+installed by the boot hook. See [the test record](docs/voice-registry.md) and
+[sanitized evidence](docs/evidence/voice-registry-2026-10-28.json).
 
-## What it does (`slim/60-slim`)
-
-In order, once per boot:
-
-1. Blocks the hosts in `hosts.block` (appended to Homebrew's `/etc/hosts`).
-2. Points `lastInputApp` at the home app and parks the remembered hardware
-   input on an empty HDMI port (`PARK_INPUT` in `slim.conf`), so power-on never
-   opens antenna static.
-3. Replaces binaries in `stub.list` with a no-op (bind mount).
-4. Hides apps in `apps.hide` with a read-only overlay of whiteouts.
-5. Optional system-UI recolour (see `theme/`).
-6. Writes a RAM-only configd layer (`keepalive.json`: trimmed app keep-alive
-   list, Input key mapping), restarts the app manager and compositor once,
-   and keeps the home app in front while they settle.
-7. Stops and runtime-masks units in `services.list`, cancels activity-manager
-   triggers in `activities.block`, and kills dynamic Luna daemons in
-   `kill.list` (with a check that they stay down).
-8. Keeps `lastInputApp` pointed at the home app.
-
-Each list documents what was tested and what was rejected (some daemons are
-restarted by the bus within seconds and are not worth killing).
-
-## Install
+## Build the launcher
 
 ```sh
-cp slim/slim.conf.example slim/slim.conf   # optional: edit PARK_INPUT
-./install.sh root@<tv-ip>                  # or an ~/.ssh/config alias
-ssh root@<tv-ip> reboot
-ssh root@<tv-ip> cat /tmp/slim.log          # after ~2 minutes
+cd launcher
+npm ci
+npm test
+npm run build
+# Optional IPK using the project-local packaging CLI:
+npm run pack
 ```
 
-`install.sh` copies the kit to `/home/root/slim`, the undo script to
-`/home/root/restore-slim.sh`, and the hook to `/var/lib/webosbrew/init.d/60-slim`.
+See [launcher/README.md](launcher/README.md) for installation and behavior.
+Building and testing do not contact a TV. There is no combined one-click
+launcher/debloat installer.
 
-## Undo
+## Install the existing runtime debloat profile
+
+Requires an already-rooted TV with Homebrew Channel startup hooks and trusted
+root SSH access. Review the [removal inventory](docs/removal-status.md), all
+lists, and recovery before installing. This profile disables voice, casting,
+AirPlay and other features; it also restarts the interface during boot.
+
+```sh
+cp slim/slim.conf.example slim/slim.conf
+# Edit PARK_INPUT and review every list for your own firmware first.
+./install.sh root@<tv-ip>
+# Reboot when ready, then inspect /tmp/slim.log over SSH.
+```
+
+The installer writes the hook and configuration to writable storage. It does
+not run the hook or reboot the TV. `slim/60-slim` blocks hosts, parks an empty
+input, applies app-hiding overlays and optional theme binds, trims keep-alives,
+restarts SAM/compositor, stops services and cancels activities. It remains a
+late runtime policy; it does not prove that those services never started.
+
+### Undo
 
 ```sh
 ssh root@<tv-ip> sh /home/root/restore-slim.sh
 ssh root@<tv-ip> reboot
 ```
 
-Removing the hook is enough on its own: every mask, overlay and bind mount is
-RAM-only and gone after the next reboot.
+The restore script disables the hook and removes its runtime controls. Reboot
+clears RAM mounts and masks. Saved preferences such as remembered input, Home
+routing and separately configured AirPlay/privacy settings may need their own
+backups to restore; disabling the hook is not a factory-state reset.
 
-## Safety
+Homebrew's crashed-boot hook failsafe is brief. `60-slim` also uses its own
+in-progress flag to skip an incomplete previous run once. This protects hooks,
+not a broken firmware image. No automatic recovery from an invalid kernel or
+rootfs has been demonstrated for the tested TV. Never flash a candidate without
+a separately proven acceptance and recovery plan.
 
-- **Failsafe:** Homebrew Channel skips hooks after a crashed boot, but its flag
-  only covers about 10 seconds. The hook keeps its own flag
-  (`/var/luna/preferences/slim_inprogress`) and skips itself once if the
-  previous run never finished.
-- **Never hide** anything named in the "kept on purpose" comment in
-  `apps.hide` (Settings, inputs, first-use/EULA, service menu, remote pairing,
-  software update…).
-- **Remote keys:** check `com.webos.keyaction` (configd) before hiding an app
-  that a remote key launches. Hiding Home Dashboard broke the Input key; it is
-  remapped in `keepalive.json`.
-- Calls to a stopped or stubbed Luna service hang until the caller's timeout
-  (about 20 s). Only stub or kill services whose callers were tested.
+## Develop the system
 
-## System-UI theme (`theme/`)
+Start with [system development](docs/system-development.md) and the
+[roadmap](docs/roadmap.md). The next milestone is a coherent voice-stack removal:
+remove callers, remove registration/activation paths, and prove normal controls
+and playback still work. Establishing control before startup is a separate
+requirement from live unregistering after boot.
 
-`theme/build_theme.py` recolours LG's QML from your own firmware (rootfs
-extract or a copy of `/usr/lib/qml` from your TV) and writes `files/` and
-`manifest.tsv`. The hook bind-mounts a file only when the live file's hash
-still matches the one it was built from, so a firmware change can't break it.
-LG's files are not included here; build them from your own TV:
+A reduced filesystem and eventually custom firmware remain project goals. This
+repository does not ship a flashable image, a firmware installer or a proven
+custom-image boot path. Experiments are opt-in and excluded from `install.sh`.
 
-```sh
-mkdir rootfs && ssh root@<tv-ip> 'tar -C / -cf - usr/lib/qml' | tar -C rootfs -xf -
-python3 theme/build_theme.py ./rootfs ./theme-out
-./install.sh root@<tv-ip> ./theme-out
-```
+## Optional system theme
 
-Edit `COLORS` in the script to choose your colour.
+`theme/build_theme.py` builds recolored QML from your private TV files. No LG
+QML is distributed here. See [system development](docs/system-development.md)
+for private source handling. Recheck live hashes before any deployment; a parser
+pass does not establish LG runtime compatibility.
 
-## Notes
+## Source and evidence
 
-See [NOTES.md](NOTES.md) for webOS quirks found along the way.
-
-## Disclaimer
-
-Rooting and modifying a TV is at your own risk. This does not write to signed
-partitions, but test carefully and keep a way back.
+[NOTES.md](NOTES.md) records platform quirks. [docs/evidence/](docs/evidence/)
+contains curated results, not private logs or firmware. [THIRD_PARTY.md](THIRD_PARTY.md)
+records launcher provenance and licensing. Never upload device dumps, credentials,
+account state, raw QML/binaries or native decompilation output to this repository.

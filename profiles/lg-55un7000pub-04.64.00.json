@@ -1,0 +1,240 @@
+{
+  "model": "LG 55UN7000PUB",
+  "firmware": "04.64.00",
+  "webOS": "5.6.2-21",
+  "testedDeviceCount": 1,
+  "confirmedRemovableApps": [
+    {
+      "id": "amazon",
+      "title": "Prime Video"
+    },
+    {
+      "id": "com.apple.appletv",
+      "title": "Apple TV"
+    },
+    {
+      "id": "com.disney.disneyplus-prod",
+      "title": "Disney+"
+    },
+    {
+      "id": "com.lgshop.app",
+      "title": "ShopTime"
+    },
+    {
+      "id": "com.movenetworks.app.sling-tv-sling-production",
+      "title": "Sling TV"
+    },
+    {
+      "id": "com.peacock.tv",
+      "title": "Peacock"
+    },
+    {
+      "id": "com.plutotv.app",
+      "title": "Pluto TV"
+    },
+    {
+      "id": "com.tubitv.ott.tubi",
+      "title": "Tubi"
+    },
+    {
+      "id": "com.twin.app.gamingportal",
+      "title": "LG Gaming Portal"
+    },
+    {
+      "id": "com.volley.lgshell",
+      "title": "Weekend Games"
+    },
+    {
+      "id": "com.wbd.stream",
+      "title": "HBO Max"
+    },
+    {
+      "id": "com.xstars.app.aquarelax",
+      "title": "Aquarium Relax"
+    },
+    {
+      "id": "epoxyaisports",
+      "title": "LG Sports Playbook"
+    },
+    {
+      "id": "hulu",
+      "title": "Hulu"
+    },
+    {
+      "id": "lgchannels.us",
+      "title": "LG Channels"
+    },
+    {
+      "id": "netflix",
+      "title": "Netflix"
+    },
+    {
+      "id": "tv.twitch.tv.starshot.lg",
+      "title": "Official Twitch"
+    },
+    {
+      "id": "webos.day",
+      "title": "LG Streaming Week"
+    }
+  ],
+  "removableAppsVerifiedAbsentAfterReboot": true,
+  "hiddenBuiltInApps": [
+    "com.webos.app.adapp",
+    "com.webos.app.adhdmi1",
+    "com.webos.app.adhdmi2",
+    "com.webos.app.adhdmi3",
+    "com.webos.app.adhdmi4",
+    "com.webos.app.adoverlay",
+    "com.webos.app.adoverlayex",
+    "com.webos.app.acrcomponent",
+    "com.webos.app.acrhdmi1",
+    "com.webos.app.acrhdmi2",
+    "com.webos.app.acrhdmi3",
+    "com.webos.app.acrhdmi4",
+    "com.webos.app.acroverlay",
+    "com.webos.app.overlaycontainer",
+    "com.webos.app.overlaycontainerex",
+    "com.webos.app.overlaycontainerhdmi1",
+    "com.webos.app.overlaycontainerhdmi2",
+    "com.webos.app.overlaycontainerhdmi3",
+    "com.webos.app.overlaycontainerhdmi4",
+    "com.webos.app.fooddelivery",
+    "com.webos.app.fooddeliveryex",
+    "com.webos.app.fooddeliveryhdmi1",
+    "com.webos.app.fooddeliveryhdmi2",
+    "com.webos.app.fooddeliveryhdmi3",
+    "com.webos.app.fooddeliveryhdmi4",
+    "com.webos.app.dangbei-card",
+    "com.webos.app.dangbei-overlay",
+    "amazon.alexapr",
+    "google.assistant",
+    "com.webos.app.voice",
+    "com.webos.app.voiceweb",
+    "airplay",
+    "com.webos.app.miracast",
+    "com.webos.app.discovery",
+    "com.webos.app.membership",
+    "com.webos.app.facebooklogin",
+    "com.webos.app.homeconnect",
+    "com.webos.app.care365",
+    "com.webos.app.customersupport",
+    "com.webos.app.remoteservice",
+    "com.webos.app.cmp-client",
+    "com.webos.app.sportsteamsettings",
+    "com.webos.app.magicnum",
+    "com.webos.app.tvuserguide",
+    "com.webos.app.browser",
+    "com.webos.app.beanbrowser",
+    "com.webos.app.livedmost",
+    "com.webos.app.liveginga",
+    "com.webos.app.liveibb",
+    "com.webos.app.store-demo",
+    "com.webos.app.sync-demo",
+    "com.webos.exampleapp.enyoapp.epg",
+    "com.webos.exampleapp.groupowner",
+    "com.webos.exampleapp.nav",
+    "com.webos.exampleapp.qmlapp.client.negative.one",
+    "com.webos.exampleapp.qmlapp.client.negative.two",
+    "com.webos.exampleapp.qmlapp.client.positive.one",
+    "com.webos.exampleapp.qmlapp.client.positive.two",
+    "com.webos.exampleapp.qmlapp.discover",
+    "com.webos.exampleapp.qmlapp.epg",
+    "com.webos.exampleapp.qmlapp.hbbtv",
+    "com.webos.exampleapp.qmlapp.livetv",
+    "com.webos.exampleapp.qmlapp.search",
+    "com.webos.exampleapp.systemui",
+    "com.webos.app.home",
+    "com.webos.app.fullhome"
+  ],
+  "stoppedSystemdUnits": [
+    "rdxd",
+    "remotelogger",
+    "nudge",
+    "contentminer",
+    "voiceconductor",
+    "voiceinput",
+    "airplay-adaptor",
+    "miracast",
+    "dmr",
+    "ssdp-discovery-lgtv",
+    "preload-manager",
+    "user-context-manager"
+  ],
+  "killedProcesses": [
+    "admanager",
+    "adoverlay-service",
+    "airplay",
+    "homekit",
+    "performer",
+    "nlpmanager",
+    "sportsalarm",
+    "livepick-plus",
+    "cbox",
+    "photorenderer",
+    "tnm",
+    "update"
+  ],
+  "stubbedExecutables": [
+    "/usr/sbin/scd-service"
+  ],
+  "activityPatterns": [
+    "^com\\.webos\\.service\\.admanager\\.",
+    "^acr_wake_up_",
+    "^adoverlay_wake_up_",
+    "^com\\.webos\\.app\\.care365\\.",
+    "^com\\.webos\\.service\\.sportsal",
+    "^com\\.webos\\.service\\.magicnum\\.",
+    "^com\\.webos\\.service\\.nlpmanager\\.",
+    "^demo\\.",
+    "^com\\.webos\\.service\\.(ssg|dial)\\.ssdpmanager\\.",
+    "^com\\.webos\\.service\\.ssdplgtv\\.",
+    "^com\\.webos\\.appUpdateService\\.check$"
+  ],
+  "protectedFeatures": [
+    "Playback and HDMI",
+    "Remote and Bluetooth",
+    "Settings and Audio Guidance TTS",
+    "Root SSH and recovery",
+    "Firmware updates remain blocked"
+  ],
+  "permanentSystemStackRemovalComplete": false,
+  "customFirmwareBootProven": false,
+  "blockedHostnames": [
+    "ad.lgsmartad.com",
+    "us.ad.lgsmartad.com",
+    "info.lgsmartad.com",
+    "us.info.lgsmartad.com",
+    "cdn-aas-campaigns.alphonso.tv",
+    "cdn-campaigns-temp.alphonso.tv",
+    "ngfts.lge.com",
+    "gfts.lge.com",
+    "aic-ngfts.lge.com",
+    "ic-ngfts.lge.com",
+    "qt2-ngfts.lge.com",
+    "kic-qt2-ngfts.lge.com",
+    "rdx2.lgtvsdp.com",
+    "cdpbeacon.lgtvcommon.com",
+    "cdpsvc.lgtvcommon.com",
+    "aic.cdpsvc.lgtvcommon.com",
+    "cdplauncher.lgtvcommon.com",
+    "aic.cdplauncher.lgtvcommon.com",
+    "recommend.lgtvcommon.com",
+    "lgrecommends.lgappstv.com",
+    "us.lgrecommends.lgappstv.com",
+    "qt2-kr.lgrecommends.lgappstv.com",
+    "nudge.lgtvcommon.com",
+    "wau.lgtvcommon.com",
+    "pnv.lgtvcommon.com",
+    "ibsstat.lgappstv.com",
+    "lgshoplog.lgappstv.com",
+    "lgshopsvc.lgappstv.com",
+    "aic.lgshopsvc.lgappstv.com",
+    "us-foodus.lgappstv.com",
+    "homeprv.lgtvcommon.com",
+    "lgchhomeapp.lgtvcommon.com",
+    "aic.lgchhomeapp.lgtvcommon.com",
+    "qcardservice.lgtvcommon.com",
+    "netflixvoice.lgtvcommon.com",
+    "download.365care.lge.com"
+  ]
+}

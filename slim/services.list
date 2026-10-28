@@ -9,7 +9,7 @@ nudge
 # Group 2: content indexing (enable after group 1 is verified)
 contentminer
 
-# Group 3: voice, casting, AirPlay and Screen Share (drop lines you use)
+# Group 3: owner does not use voice, casting, AirPlay or Screen Share
 voiceconductor
 voiceinput
 airplay-adaptor

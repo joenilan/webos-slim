@@ -34,6 +34,11 @@ if [ -f /var/run/tvconfig/hwoption/zz-slim.json ]; then
   echo "keep-alive override removed"
   systemctl restart sam
 fi
+if grep -q '^/dev/zram0' /proc/swaps; then
+  swapoff /dev/zram0 && echo 1 > /sys/block/zram0/reset && echo "zram removed"
+fi
+echo cfq > /sys/block/mmcblk0/queue/scheduler 2>/dev/null
+echo 3 > /proc/sys/vm/page-cluster
 if grep -q '^# slim block' /etc/hosts; then
   sed '/^# slim block/,$d' /etc/hosts > /tmp/hosts.slim && cat /tmp/hosts.slim > /etc/hosts
   echo "hosts block removed"

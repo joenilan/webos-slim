@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-28",
+  "scope": "Nine repository files compared read-only with the installed TV files; hashes are of our scripts/config, not firmware dumps",
+  "files": [
+    {
+      "file": "slim/60-slim",
+      "matchesLive": true,
+      "sha256": "d7bbf3587d89961b516cd9c2110c6e472665ce11ce5f4bf0a777563fe69196a4"
+    },
+    {
+      "file": "slim/restore-slim.sh",
+      "matchesLive": true,
+      "sha256": "d3d0fea4a83041a3378d6a6fb116d442f1a20586464b9ba610c4aacd54e07378"
+    },
+    {
+      "file": "slim/services.list",
+      "matchesLive": true,
+      "sha256": "5b3efab9cadb25ddeca0a5ee4f0f0f1bdc55a9ba05170c6d9c292de48aa13b07"
+    },
+    {
+      "file": "slim/kill.list",
+      "matchesLive": true,
+      "sha256": "c0fc7b46b8813877ad0a5d1e253600d9fd8de46ad2d3917031fe9896ae78f01a"
+    },
+    {
+      "file": "slim/hosts.block",
+      "matchesLive": true,
+      "sha256": "5e79f9fab2c4782238c10c8a3ce79b0bd3a825f0eb1eda9d0d6d79bb9c83f440"
+    },
+    {
+      "file": "slim/activities.block",
+      "matchesLive": true,
+      "sha256": "6d2c78b623878c583c50419400d829a7cb8cc65ad95cc0d2f36199e6cabeb226"
+    },
+    {
+      "file": "slim/apps.hide",
+      "matchesLive": true,
+      "sha256": "1b00252152099a03b7229d9787f3776a76f0069e8d2279b6667cac37055c757c"
+    },
+    {
+      "file": "slim/stub.list",
+      "matchesLive": true,
+      "sha256": "02f441b1d7965e1b7bea1f259844f51311add8f6238d15fb7f46a0db15a5b1cf"
+    },
+    {
+      "file": "slim/keepalive.json",
+      "matchesLive": true,
+      "sha256": "3389bcc99082aed4c6099e83ffc15d8b070d270c74e4c1b500752442430225a5"
+    }
+  ]
+}

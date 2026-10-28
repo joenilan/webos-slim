@@ -3,7 +3,7 @@
 # services. Installed in /var/lib/webosbrew/init.d; Homebrew's failsafe skips
 # it after a crashed boot. Undo: sh /home/root/restore-slim.sh
 #
-# Order matters for what you see on screen: everything visual is applied first,
+# Order matters for what the owner sees: everything visual is applied first,
 # then the compositor and app manager restart once, the home app is brought
 # to the front, and the slow service shutdown runs afterwards.
 DIR=/home/root/slim

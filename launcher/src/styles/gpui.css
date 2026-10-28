@@ -1,0 +1,440 @@
+@font-face {
+  font-family: "GPUI Inter";
+  src: url("../assets/fonts/Inter-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "GPUI Inter";
+  src: url("../assets/fonts/Inter-SemiBold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+/* Personal TV theme. Fedora GPUI Dark's neutral palette and lilac focus.
+   Opaque surfaces; no backdrop effects, painted glows, or moving wallpaper. */
+body.theme-gpui {
+  --ui-bg: #0a0a0a;
+  --ui-panel: #171717;
+  --ui-raised: #202020;
+  --ui-hover: #262626;
+  --ui-border: #262626;
+  --ui-text: #fafafa;
+  --ui-muted: #a3a3a3;
+  --ui-accent: #c084fc;
+  --ui-selected: #9333ea;
+  color: var(--ui-text);
+  background: var(--ui-bg);
+  font-family: "GPUI Inter", "Inter", "Segoe UI", "LG Smart UI", sans-serif;
+}
+body.theme-gpui #app { background: var(--ui-bg); }
+body.theme-gpui #background-layer {
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0;
+  background: linear-gradient(150deg, #161616 0%, #0a0a0a 70%) !important;
+  animation: none !important;
+  transform: none !important;
+  filter: none !important;
+}
+body.theme-gpui #scrim, body.theme-gpui #dim { display: none; }
+body.theme-gpui .top-bar {
+  height: 152px;
+  min-height: 152px;
+  padding: 50px 96px;
+}
+body.theme-gpui .home-wordmark {
+  display: flex;
+  align-items: center;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 52px;
+  letter-spacing: -.02em;
+}
+body.theme-gpui .home-wordmark > span {
+  display: inline-block;
+  width: 9px;
+  height: 26px;
+  margin-right: 16px;
+  border-radius: 3px;
+  background: var(--ui-accent);
+}
+body.theme-gpui .clock-stack {
+  top: 48px !important;
+  right: 190px !important;
+  left: auto !important;
+  transform: none !important;
+  text-align: right !important;
+}
+body.theme-gpui .clock {
+  font-size: 38px !important;
+  line-height: 1.15;
+  font-weight: 500;
+  letter-spacing: -.02em;
+  opacity: 1;
+}
+body.theme-gpui .clock-ampm { color: var(--ui-muted); font-size: .45em; }
+body.theme-gpui .clock-date {
+  font-size: 18px !important;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--ui-muted);
+  margin-top: 8px;
+  opacity: 1;
+}
+body.theme-gpui .top-actions { top: 54px; right: 96px; }
+body.theme-gpui .settings-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 8px;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-panel);
+  color: var(--ui-muted);
+}
+body.theme-gpui .settings-icon-glyph { width: 26px; height: 26px; filter: none; }
+body.theme-gpui .launcher {
+  height: calc(100% - 152px);
+  padding: 12px 96px 24px;
+  overflow: hidden;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+body.theme-gpui .app-grid-shell {
+  order: 1;
+  max-width: none !important;
+  margin: 0 !important;
+  padding-top: 52px;
+}
+body.theme-gpui .app-grid-shell::before {
+  content: 'Apps';
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--ui-muted);
+  font-size: 22px;
+  font-weight: 500;
+}
+body.theme-gpui .launcher .app-grid {
+  justify-content: flex-start;
+  align-items: stretch;
+  margin: -12px;
+  padding: 12px;
+  width: calc(100% + 24px);
+  overflow-x: auto;
+}
+body.theme-gpui .app-grid > * { margin: 12px; }
+body.theme-gpui .app-tile {
+  width: calc(220px * var(--tile-scale, 1));
+  height: calc(190px * var(--tile-scale, 1));
+  padding: calc(28px * var(--tile-scale, 1)) 18px 22px;
+  border-radius: 8px;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-panel);
+  color: var(--ui-text);
+  box-shadow: none;
+  transform: none;
+  flex-shrink: 0;
+  justify-content: center;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+body.theme-gpui .app-tile:hover { background: var(--ui-raised); }
+body.theme-gpui .app-tile.settings-tile { background: var(--ui-panel); }
+body.theme-gpui .app-icon, body.theme-gpui .app-fallback {
+  width: calc(64px * var(--tile-scale, 1));
+  height: calc(64px * var(--tile-scale, 1));
+  border-radius: 0;
+  object-fit: contain;
+  background: none;
+  box-shadow: none;
+  filter: none;
+}
+body.theme-gpui .app-label {
+  margin-top: 20px;
+  max-width: 190px;
+  font-size: calc(23px * var(--tile-scale, 1));
+  font-weight: 500;
+  opacity: 1;
+}
+body.theme-gpui .app-key {
+  top: 12px;
+  right: 14px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: 4px;
+  font-size: 15px;
+  color: var(--ui-muted);
+  background: transparent;
+  box-shadow: none;
+}
+body.theme-gpui .input-row {
+  order: 2;
+  position: relative;
+  margin: 18px 0 0 !important;
+  padding-top: 50px;
+  border-top: 1px solid var(--ui-border);
+  justify-content: flex-start !important;
+}
+body.theme-gpui .input-row::before {
+  content: 'Inputs';
+  position: absolute;
+  top: 17px;
+  left: 0;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--ui-muted);
+}
+body.theme-gpui .input-row > * { margin: 10px 16px 10px 0; }
+body.theme-gpui .input-chip, body.theme-gpui .channel-chip {
+  border: 1px solid var(--ui-border);
+  border-radius: 6px;
+  background: var(--ui-panel);
+  color: var(--ui-text);
+  font-size: 22px;
+  padding: 15px 32px;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+body.theme-gpui .input-chip.active { color: var(--ui-accent); border-color: var(--ui-accent); }
+body.theme-gpui .channel-strip { order: 3; margin-top: 16px; }
+body.theme-gpui .channel-chip-now .channel-number { color: var(--ui-accent); }
+body.theme-gpui .app-scroll-edge { display: none; }
+body.theme-gpui .focused,
+body.theme-gpui .settings-panel .focusable.focused,
+body.theme-gpui .settings-panel .settings-row-highlight {
+  outline: 2px solid var(--ui-accent) !important;
+  outline-offset: 4px;
+  box-shadow: none !important;
+  transform: none !important;
+  border-color: var(--ui-accent);
+}
+body.theme-gpui .app-tile.focused { background: #211a29; }
+body.theme-gpui .settings-panel,
+body.theme-gpui .settings-body { background: var(--ui-bg); color: var(--ui-text); }
+body.theme-gpui .settings-header {
+  background: var(--ui-panel);
+  border-bottom: 1px solid var(--ui-border);
+  padding: 28px 48px;
+}
+body.theme-gpui .settings-header h2 { margin: 0; font-size: 30px; font-weight: 600; }
+body.theme-gpui .settings-header .settings-hint { margin: 6px 0 0; }
+body.theme-gpui .settings-nav { background: var(--ui-panel); border-color: var(--ui-border); }
+body.theme-gpui .settings-tab { border-radius: 6px; color: var(--ui-muted); }
+body.theme-gpui .settings-tab.active { background: var(--ui-hover); color: var(--ui-text); }
+body.theme-gpui .settings-tab.active::before { background: var(--ui-accent); }
+body.theme-gpui .settings-tab.focusable.focused { background: #211a29; color: var(--ui-text); }
+body.theme-gpui .settings-tab-sub, body.theme-gpui .settings-tab.active .settings-tab-sub,
+body.theme-gpui .settings-tab.focusable.focused .settings-tab-sub { color: var(--ui-muted); }
+body.theme-gpui .settings-hint, body.theme-gpui .settings-version { color: var(--ui-muted); opacity: 1; }
+body.theme-gpui .settings-panel .settings-row { color: var(--ui-text); border-radius: 6px; }
+body.theme-gpui .settings-panel .settings-row-highlight { background: var(--ui-panel); }
+body.theme-gpui .settings-panel .settings-text,
+body.theme-gpui .settings-panel .settings-textarea,
+body.theme-gpui .settings-panel .settings-close,
+body.theme-gpui .settings-panel .settings-save,
+body.theme-gpui .settings-panel .settings-mini-btn,
+body.theme-gpui .settings-panel .option-stepper {
+  background: var(--ui-raised);
+  border: 1px solid #404040;
+  border-radius: 6px;
+  color: var(--ui-text);
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+body.theme-gpui .settings-panel .settings-save {
+  background: var(--ui-accent);
+  border-color: var(--ui-accent);
+  color: #17121c;
+  font-weight: 600;
+}
+body.theme-gpui .settings-panel input[readonly],
+body.theme-gpui .settings-panel textarea[readonly] { color: var(--ui-text); -webkit-text-fill-color: var(--ui-text); }
+body.theme-gpui .settings-panel .stepper-arrow { background: var(--ui-hover); color: var(--ui-accent); box-shadow: none; }
+body.theme-gpui .settings-panel input[type='checkbox'] { accent-color: var(--ui-accent); }
+body.theme-gpui .personal-settings-body { padding: 34px 64px 64px; }
+body.theme-gpui .personal-settings .settings-section { max-width: 1100px; margin: 0 auto 30px; }
+body.theme-gpui .personal-settings h3 {
+  font-size: 23px;
+  font-weight: 500;
+  color: var(--ui-muted);
+  margin: 0 0 18px;
+}
+body.theme-gpui .personal-settings .settings-row {
+  min-height: 56px;
+  padding: 8px 16px;
+  margin: 0;
+  border-bottom: 1px solid var(--ui-border);
+  display: flex;
+  justify-content: space-between;
+  font-size: 24px;
+}
+body.theme-gpui .personal-tool-buttons { display: flex; margin: 0 0 24px; }
+body.theme-gpui .personal-tool-buttons > * + * { margin-left: 18px; }
+body.theme-gpui #toast { background: var(--ui-panel); color: var(--ui-text); border: 1px solid var(--ui-border); border-radius: 6px; }
+body.theme-gpui .all-apps { background: var(--ui-bg); }
+body.theme-gpui .settings-panel input[type='checkbox'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  background: var(--ui-raised);
+  border: 1px solid #525252;
+  border-radius: 4px;
+  cursor: pointer;
+}
+body.theme-gpui .settings-panel input[type='checkbox']:checked {
+  background-color: var(--ui-accent);
+  border-color: var(--ui-accent);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12 5 5 9-10' fill='none' stroke='%2317121c' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 22px 22px;
+}
+body.theme-gpui .personal-settings .settings-header .settings-mini-btn,
+body.theme-gpui .personal-settings .personal-tool-buttons .settings-mini-btn {
+  font-size: 21px;
+  padding: 11px 18px;
+}
+
+/* One dashboard row. Weather expands; Calendar and TV status stay compact. */
+body.theme-gpui .widget-row {
+  order: 4; position: relative; display: flex; align-items: stretch;
+  flex: 1 1 auto; min-height: 0; max-height: 370px;
+  margin: 18px 0 0; padding-top: 46px; border-top: 1px solid var(--ui-border);
+}
+body.theme-gpui .widget-row[hidden], body.theme-gpui .widget-row > [hidden] { display: none; }
+body.theme-gpui .widget-row::before {
+  content: 'Widgets'; position: absolute; top: 14px; left: 0;
+  font-size: 22px; font-weight: 500; color: var(--ui-muted);
+}
+body.theme-gpui .widget-row > * {
+  position: relative; top: auto; right: auto; left: auto;
+  display: flex; flex-direction: column; padding: 16px 20px;
+  border-radius: 8px; border: 1px solid var(--ui-border); background: var(--ui-panel);
+  box-shadow: none; text-shadow: none; color: var(--ui-text); min-height: 0;
+}
+body.theme-gpui .widget-row > * + * { margin-left: 20px; }
+body.theme-gpui .weather-panel { flex: 1 1 0; min-width: 0; pointer-events: auto; }
+body.theme-gpui .stats-panel { flex: 0 0 294px; min-width: 0; }
+body.theme-gpui .stats-title { margin-bottom: 16px; font-size: 20px; font-weight: 500; color: var(--ui-muted); }
+body.theme-gpui .stats-row { display: flex; justify-content: space-between; font-size: 19px; line-height: 1.65; }
+body.theme-gpui .stats-label { margin-right: 12px; color: var(--ui-muted); }
+body.theme-gpui .stats-value { color: var(--ui-text); font-weight: 500; white-space: nowrap; }
+body.theme-gpui .stats-bar { height: 4px; margin: 2px 0 8px; border-radius: 2px; background: var(--ui-border); overflow: hidden; flex-shrink: 0; }
+body.theme-gpui .stats-bar span { display: block; height: 100%; background: var(--ui-selected); }
+body.theme-gpui .stats-update { margin-top: auto; padding-top: 10px; font-size: 15px; color: var(--ui-muted); }
+
+/* Advanced settings: the upstream panel's warm accents, on the GPUI palette. */
+body.theme-gpui .settings-panel .settings-section h3 {
+  margin: 8px 0 16px;
+  font-size: 23px;
+  font-weight: 500;
+  color: var(--ui-muted);
+}
+body.theme-gpui .settings-panel .settings-subheading { color: var(--ui-text); }
+body.theme-gpui .settings-panel .settings-suggestion strong,
+body.theme-gpui .photo-picker-custom .photo-picker-caption { color: var(--ui-accent); }
+body.theme-gpui .settings-row input[type='range']::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background: #404040;
+}
+body.theme-gpui .settings-row input[type='range']::-webkit-slider-thumb {
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border: 0;
+  background: var(--ui-accent);
+  box-shadow: none;
+}
+
+/* Weather header: place, hourly switch, refresh arrows. */
+body.theme-gpui .weather-widget-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--ui-border); flex-shrink: 0; }
+body.theme-gpui .weather-place { min-width: 0; max-width: none; margin: 0; padding: 0; border: 0; font-size: 19px; color: var(--ui-muted); letter-spacing: 0; }
+body.theme-gpui .weather-controls { display: flex; align-items: center; margin-left: 12px; flex-shrink: 0; }
+body.theme-gpui .widget-icon-button, body.theme-gpui .widget-toggle, body.theme-gpui .calendar-month {
+  appearance: none; -webkit-appearance: none; border: 1px solid transparent; border-radius: 6px;
+  background: transparent; color: var(--ui-text); font: inherit; cursor: pointer;
+}
+body.theme-gpui .widget-icon-button { width: 42px; height: 42px; padding: 9px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 30px; }
+body.theme-gpui .widget-icon-button svg { width: 24px; height: 24px; }
+body.theme-gpui .widget-icon-button[aria-busy='true'] { color: var(--ui-accent); }
+body.theme-gpui .widget-toggle { display: inline-flex; align-items: center; min-height: 42px; padding: 4px 8px; margin-right: 8px; font-size: 17px; color: var(--ui-muted); }
+body.theme-gpui .widget-switch-track { display: block; width: 34px; height: 20px; border-radius: 10px; background: #404040; margin-left: 10px; padding: 3px; }
+body.theme-gpui .widget-switch-track span { display: block; width: 14px; height: 14px; border-radius: 7px; background: #d4d4d4; }
+body.theme-gpui .widget-toggle[aria-checked='true'] .widget-switch-track { background: var(--ui-selected); }
+body.theme-gpui .widget-toggle[aria-checked='true'] .widget-switch-track span { transform: translateX(14px); background: #fafafa; }
+body.theme-gpui .widget-icon-button.focused, body.theme-gpui .widget-icon-button:focus,
+body.theme-gpui .widget-toggle.focused, body.theme-gpui .widget-toggle:focus,
+body.theme-gpui .calendar-month.focused, body.theme-gpui .calendar-month:focus { outline: 2px solid var(--ui-accent); outline-offset: 2px; background: #211a29; }
+body.theme-gpui .widget-toggle[hidden] { display: none; }
+body.theme-gpui .weather-content { flex: 1 1 auto; min-height: 0; }
+body.theme-gpui .weather-row { height: 100%; }
+body.theme-gpui .weather-today { width: 206px; flex-shrink: 0; padding: 0 16px 0 0; justify-content: flex-start; }
+body.theme-gpui .weather-day { flex: 1 1 0; min-width: 0; width: auto; }
+body.theme-gpui .weather-today-main { margin: 12px 0 8px; }
+body.theme-gpui .weather-unit-inline { font-size: 22px; vertical-align: top; margin-left: 1px; }
+body.theme-gpui .weather-feels { color: var(--ui-muted); }
+body.theme-gpui .weather-day-label { font-size: 16px; }
+body.theme-gpui .weather-hour-rain { font-size: 14px; color: var(--ui-muted); margin-top: 8px; white-space: nowrap; }
+body.theme-gpui .weather-footer { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--ui-border); flex-shrink: 0; }
+body.theme-gpui .weather-meta { display: flex; justify-content: space-between; align-items: baseline; }
+body.theme-gpui .weather-update { color: var(--ui-muted); font-size: 15px; line-height: 1.4; }
+body.theme-gpui .weather-credit { color: var(--ui-muted); font-size: 13px; margin-left: 12px; white-space: nowrap; }
+body.theme-gpui .weather-empty { margin: 16px 0; font-size: 20px; color: var(--ui-muted); }
+body.theme-gpui .app-grid-shell, body.theme-gpui .input-row { flex-shrink: 0; }
+body.theme-gpui .launcher::-webkit-scrollbar { display: none; width: 0; height: 0; }
+body.theme-gpui .launcher { scrollbar-width: none; }
+
+/* Local calendar, fixed six-week grid. No hidden extra rows or scrolling. */
+body.theme-gpui .calendar-panel { flex: 0 0 334px; }
+body.theme-gpui .calendar-head { display: flex; align-items: center; justify-content: space-between; margin: -4px -8px 8px; flex-shrink: 0; }
+body.theme-gpui .calendar-month { padding: 8px 4px; font-size: 19px; font-weight: 500; white-space: nowrap; }
+body.theme-gpui .calendar-weekdays, body.theme-gpui .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
+body.theme-gpui .calendar-weekdays { padding: 0 0 8px; font-size: 14px; color: var(--ui-muted); flex-shrink: 0; }
+body.theme-gpui .calendar-grid { grid-template-rows: repeat(6, 1fr); flex: 1; min-height: 0; }
+body.theme-gpui .calendar-day { display: flex; align-items: center; justify-content: center; font-size: 18px; margin: 2px; border: 1px solid transparent; border-radius: 5px; }
+body.theme-gpui .calendar-outside { color: #525252; }
+body.theme-gpui .calendar-today { color: var(--ui-accent); background: #211a29; border-color: var(--ui-accent); }
+
+/* Keep the small settings menu on a single screen too. */
+body.theme-gpui .personal-settings-body { padding: 24px 64px; }
+body.theme-gpui .personal-settings .settings-section { margin-bottom: 18px; }
+body.theme-gpui .personal-settings .settings-row { min-height: 44px; font-size: 22px; padding: 4px 16px; }
+body.theme-gpui .personal-settings h3 { margin-bottom: 10px; }
+body.theme-gpui .personal-settings .personal-tool-buttons { margin-bottom: 12px; }
+
+/* Optional, subdued weather. Static clouds; precipitation updates at 4 fps. */
+.weather-effects { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+.weather-effects[hidden] { display: none; }
+.weather-glow { position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: radial-gradient(ellipse at 25% 25%, rgba(169,132,206,.10), transparent 80%), linear-gradient(135deg, rgba(100,92,125,.04), rgba(70,87,117,.04)); }
+.weather-effects[data-weather='clear'][data-day='true'] .weather-glow { background: radial-gradient(ellipse at 25% 15%, rgba(215,173,103,.10), transparent 85%), linear-gradient(135deg, rgba(145,118,70,.04), rgba(109,125,145,.04)); }
+.weather-effects[data-weather='clear'][data-day='false'] .weather-glow { background: radial-gradient(ellipse at 70% 15%, rgba(118,145,207,.11), transparent 85%), linear-gradient(135deg, rgba(72,84,125,.05), rgba(65,76,117,.05)); }
+.weather-cloud { display: none; position: absolute; top: 0; left: -20%; width: 100%; height: 45%; background: radial-gradient(ellipse, rgba(160,172,194,.07), transparent 65%); }
+.weather-cloud-b { top: 18%; left: 30%; }
+.weather-effects[data-weather='clouds'] .weather-cloud, .weather-effects[data-weather='overcast'] .weather-cloud,
+.weather-effects[data-weather='rain'] .weather-cloud, .weather-effects[data-weather='fog'] .weather-cloud { display: block; }
+.weather-precipitation { position: absolute; top: -100%; left: 0; width: 100%; height: 100%; }
+.weather-particle { display: none; position: absolute; width: 2px; height: 28px; background: rgba(164,189,220,.16); }
+.weather-effects[data-weather='rain'] .weather-particle { display: block; }
+.weather-effects[data-weather='snow'] .weather-particle { display: block; width: 4px; height: 4px; border-radius: 50%; background: rgba(220,229,244,.3); }
+body.app-inactive .weather-effects, body.custom-screensaver-active .weather-effects { display: none; }
+.weather-reduced-motion .weather-particle { display: none !important; }
+@media (prefers-reduced-motion: reduce) { .weather-particle { display: none !important; } }
+body.theme-gpui .weather-panel[hidden] + .calendar-panel { margin-left: 0; }
+body.theme-gpui .weather-panel[hidden] + .calendar-panel[hidden] + .stats-panel { margin-left: 0; }
+
+/* Static launch feedback: no continuous animation on the TV. */
+body.theme-gpui .app-launch-status {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  color: var(--ui-accent, #bf94ff);
+  font-size: 15px;
+  line-height: 20px;
+  text-align: center;
+  pointer-events: none;
+}

@@ -69,3 +69,18 @@ Quirks found while building this on a webOS 5 TV. Each one cost real time.
 - BusyBox: `date` has no `%N`, `timeout` needs `-t`, no `python3`.
 - Files copied with `tar`/`scp` keep the PC's modes; a web app with 0600
   files fails to load (WAM loaderror -10). chmod after copying.
+
+## Structural removal research (2026-10-28)
+
+A targeted live voice manifest unload/reload passed on the confirmed TV. The
+registered/stopped request produced no reply before its 23-second deadline;
+unregistered it returned explicit absence in 0.268 s including SSH. See
+[the full bounded result and limitations](docs/voice-registry.md). This is
+service registry control after startup, not evidence of early boot exclusion.
+A Type=static Luna registration is not proof of dynamic activation.
+
+The staged caller-removal builder preserves mixed CRLF/LF. A normalized patch
+initially failed; independent byte-for-byte patch application caught this.
+An empty direct-callers list does not prove dead code: native handlers may be
+referenced through code pointers. PIE symbols need the provider's observed
+address mapping; confirm the selected function's identity before analysis.

@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-28",
+  "device": {
+    "model": "LG 55UN7000PUB",
+    "firmware": "04.64.00",
+    "webOS": "5.6.2-21",
+    "testedDeviceCount": 1
+  },
+  "operation": "Temporary voice-framework manifest unregister/probe/restore in RAM",
+  "targetManifest": "/usr/share/luna-service2/manifests.d/voice-framework.manifest.json",
+  "prefix": "",
+  "baseline": {
+    "elapsedSeconds": 23.715,
+    "outcome": "No reply before 23-second request deadline; exit code 0 is not response success"
+  },
+  "unregistered": {
+    "elapsedSeconds": 0.268,
+    "outcome": "Explicit service-does-not-exist response"
+  },
+  "restoration": {
+    "originalPermissionsRestoredExactly": true,
+    "directRestorationTested": true,
+    "independentTimedGuardArmed": true,
+    "automaticGuardRecoveryExercised": false
+  },
+  "checks": {
+    "settingsReadPassed": true,
+    "inputReadPassed": true,
+    "coreProcessIdsUnchanged": true,
+    "youtubeProcessIdUnchanged": true,
+    "youtubeForegroundBeforeDuringAfter": true,
+    "savedAudioGuidance": "off",
+    "sourceFileHashesUnchanged": true
+  },
+  "limits": [
+    "No memory/performance gain claimed; voice was already stopped",
+    "No audio/video continuity measurement; unchanged process IDs and foreground are narrower evidence",
+    "No physical remote, HDMI signal, or active Audio Guidance test",
+    "Removal of all native clients and initialization/timeout dependencies remains incomplete",
+    "This is a live proof of removal behavior, not proof of exclusion before startup",
+    "No reduced rootfs image built or custom firmware boot/recovery established"
+  ],
+  "candidate": {
+    "changedQmlFiles": 5,
+    "deletedAdapters": 3,
+    "syntaxChecksPassed": 5,
+    "isolatedBehaviorChecksPassed": 8,
+    "patchAppliedByteForByteToSeparateCopy": true,
+    "deployed": false,
+    "lgQt5RuntimeTested": false
+  },
+  "hubSha256": "775c47e424e340956d4311ad4eb76c685b8981f04fe78f6a114b972729f43d94",
+  "publicDriverLiveRetest": {
+    "passed": true,
+    "registeredStoppedSeconds": 23.312,
+    "unregisteredSeconds": 0.244,
+    "permissionsRestoredExactly": true,
+    "coreProcessesUnchanged": true,
+    "persistentPolicyInstalled": false,
+    "timedGuardAutomaticallyExercised": false
+  }
+}

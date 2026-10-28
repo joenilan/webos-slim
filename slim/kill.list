@@ -2,7 +2,7 @@
 admanager
 adoverlay-service
 # AirPlay/HomeKit receivers (airplay.service, airplay.homekit). Separate from
-# the airplay-adaptor unit. On the tested TV AirPlayEnabled was also set false (by hand) in
+# the airplay-adaptor unit. AirPlayEnabled is also set false in
 # /var/lib/airplay/airplayPersistedUserSettings.plist so an on-demand respawn
 # stays silent. Undo: Settings > General > AirPlay, or restore the plist backup.
 airplay
